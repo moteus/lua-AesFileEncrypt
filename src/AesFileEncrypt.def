@@ -1,0 +1,6 @@
+EXPORTS
+  fcrypt_init
+  fcrypt_encrypt
+  fcrypt_decrypt
+  fcrypt_end
+  luaopen_AesFileEncrypt

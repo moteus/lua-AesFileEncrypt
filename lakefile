@@ -1,0 +1,38 @@
+PROJECT = 'AesFileEncrypt'
+
+if LUA_VER == '5.2' then
+  LUA_NEED = 'lua52'
+  LUA_DIR  = ENV.LUA_DIR_5_2 or ENV.LUA_DIR
+  LUA_RUNNER = 'lua52'
+else
+  LUA_NEED = 'lua'
+  LUA_DIR  = ENV.LUA_DIR
+  LUA_RUNNER = 'lua'
+end
+
+ROOT    = ROOT or J(LUA_DIR,'libs',PROJECT)
+LUADIR  = LUADIR or J(ROOT, 'share')
+LIBDIR  = LIBDIR or J(ROOT, 'share')
+DYNAMIC = as_bool(DYNAMIC, false)
+
+AesFileEncrypt = c.shared{PROJECT, 
+  base     = 'src',
+  src      = {'fileenc/*.c', '*.c'},
+  exclude  = {'fileenc/main'},
+  needs    = {LUA_NEED},
+  dynamic  = DYNAMIC,
+  strip    = true,
+}
+
+target('build', AesFileEncrypt)
+
+install = target('install', {
+  file.group{odir=LIBDIR;            src = AesFileEncrypt        };
+  file.group{odir=J(ROOT, 'test');   src = J('test', '*.*')      };
+})
+
+target('test', install, function()
+  run_test("test.lua")
+end)
+
+default('build')

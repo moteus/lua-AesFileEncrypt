@@ -1,0 +1,1 @@
+Lua binding to [FileEncrypt](http://www.gladman.me.uk/cryptography_technology/fileencrypt)
