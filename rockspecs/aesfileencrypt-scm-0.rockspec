@@ -16,7 +16,7 @@ Encryption libray use
   b. AES in CTR mode for encryption
   c. HMAC-SHA1 for authentication
   d. A Random Data Pool based on Peter Gutmann's ideas
-]]
+]];
   license = "GPL",
 }
 
