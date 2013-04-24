@@ -3,7 +3,7 @@ version = "scm-0"
 
 source = {
   url = "https://github.com/moteus/lua-AesFileEncrypt/archive/master.zip",
-  dir = "lzmq-master",
+  dir = "lua-AesFileEncrypt-master",
 }
 
 description = {
