@@ -1,3 +1,4 @@
+local HAS_RUNNER = not not lunit
 local lunit = require "lunit"
 local tutil = require "utils"
 local AesFileEncrypt = require "AesFileEncrypt"
@@ -59,6 +60,8 @@ function test_error()
 end
 
 function test_encrypt_string()
+  assert_equal(42, #data)
+
   local salt, pwd_ver = fenc:open(3, pwd, SALT)
 
   assert_string(salt, pwd_ver)
@@ -140,4 +143,4 @@ function test_encrypt_context()
   assert_equal(etalon, hex(edata) )
 end
 
-lunit.run()
+if not HAS_RUNNER then lunit.run() end
