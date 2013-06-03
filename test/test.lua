@@ -60,8 +60,6 @@ function test_error()
 end
 
 function test_encrypt_string()
-  assert_equal(42, #data)
-
   local salt, pwd_ver = fenc:open(3, pwd, SALT)
 
   assert_string(salt, pwd_ver)
