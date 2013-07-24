@@ -20,6 +20,7 @@ AesFileEncrypt = c.shared{PROJECT,
   src      = {'fileenc/*.c', '*.c'},
   exclude  = {'fileenc/main'},
   needs    = {LUA_NEED},
+  defines  = {'USE_SHA1'},
   dynamic  = DYNAMIC,
   strip    = true,
 }
