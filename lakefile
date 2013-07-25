@@ -15,12 +15,14 @@ LUADIR  = LUADIR or J(ROOT, 'share')
 LIBDIR  = LIBDIR or J(ROOT, 'share')
 DYNAMIC = as_bool(DYNAMIC, false)
 
+DEFINES = L(DEFINES, 'USE_SHA1')
+
 AesFileEncrypt = c.shared{PROJECT, 
   base     = 'src',
   src      = {'fileenc/*.c', '*.c'},
   exclude  = {'fileenc/main'},
   needs    = {LUA_NEED},
-  defines  = {'USE_SHA1'},
+  defines  = DEFINES,
   dynamic  = DYNAMIC,
   strip    = true,
 }
@@ -29,7 +31,7 @@ AesFileEncryptTest = c.program{'test',
   base     = J('src', 'fileenc');
   src      = '*';
   exclude  = 'main';
-  defines  = {'USE_SHA1', 'TEST'};
+  defines  = L(DEFINES, 'TEST');
   dynamic  = DYNAMIC;
   strip    = true;
 }
