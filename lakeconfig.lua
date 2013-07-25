@@ -77,12 +77,33 @@ function run(file, cwd)
   return true, 0
 end
 
+function Exec(file, cwd)
+  print()
+  print("exec " .. file)
+  if not TESTING then
+    if cwd then lake.chdir(cwd) end
+    local status, code = utils.execute( file )
+    if cwd then lake.chdir("<") end
+    print()
+    return status, code
+  end
+  return true, 0
+end
+
 function run_test(name, params)
-  local test_dir = J(ROOT, 'test')
+  local test_dir = TESTDIR or J(ROOT, 'test')
   local cmd = J(test_dir, name)
   if params then cmd = cmd .. ' ' .. params end
   local ok = run(cmd, test_dir)
-  print("TEST " .. cmd .. (ok and ' - pass!' or ' - fail!'))
+  print("TEST " .. name .. (ok and ' - pass!' or ' - fail!'))
+end
+
+function exec_test(name, params)
+  local test_dir = TESTDIR or J(ROOT, 'test')
+  local cmd = J(test_dir, name)
+  if params then cmd = cmd .. ' ' .. params end
+  local ok = Exec(cmd, test_dir)
+  print("TEST " .. name .. (ok and ' - pass!' or ' - fail!'))
 end
 
 function spawn(file, cwd)
