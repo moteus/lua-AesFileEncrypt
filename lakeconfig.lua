@@ -1,3 +1,7 @@
+local io = require "io"
+io.stdout:setvbuf"no"
+io.stderr:setvbuf"no"
+
 function vc_version()
   local VER = lake.compiler_version()
   MSVC_VER = ({
@@ -77,7 +81,7 @@ function run(file, cwd)
   return true, 0
 end
 
-function Exec(file, cwd)
+function exec(file, cwd)
   print()
   print("exec " .. file)
   if not TESTING then
@@ -102,7 +106,7 @@ function exec_test(name, params)
   local test_dir = TESTDIR or J(ROOT, 'test')
   local cmd = J(test_dir, name)
   if params then cmd = cmd .. ' ' .. params end
-  local ok = Exec(cmd, test_dir)
+  local ok = exec(cmd, test_dir)
   print("TEST " .. name .. (ok and ' - pass!' or ' - fail!'))
 end
 

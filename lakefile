@@ -40,12 +40,12 @@ target('build', {AesFileEncrypt, AesFileEncryptTest})
 
 install = target('install', {
   file.group{odir=LIBDIR;            src = AesFileEncrypt        };
-  -- file.group{odir=J(ROOT, 'test');   src = AesFileEncryptTest    };
+  file.group{odir=J(ROOT, 'test');   src = AesFileEncryptTest    };
   file.group{odir=J(ROOT, 'test');   src = J('test', '*.*')      };
 })
 
 target('test', install, function()
-  Exec(AesFileEncryptTest.target)
+  exec_test(AesFileEncryptTest.name)
   run_test("test.lua")
 end)
 
