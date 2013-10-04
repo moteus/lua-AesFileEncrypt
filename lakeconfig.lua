@@ -11,6 +11,8 @@ function vc_version()
   return MSVC_VER
 end
 
+if not L then
+
 local function arkey(t)
   assert(type(t) == 'table')
   local keys = {}
@@ -50,6 +52,8 @@ end
 
 function L(...)
   return expand({}, {...})
+end
+
 end
 
 J = J or path.join
@@ -110,20 +114,31 @@ function exec_test(name, params)
   print("TEST " .. name .. (ok and ' - pass!' or ' - fail!'))
 end
 
-function spawn(file, cwd)
-  local winapi = prequire "winapi"
-  if not winapi then
-    print(file, ' error: Test needs winapi!')
-    return false
+--[[spawn]] if WINDOWS then
+  function spawn(file, cwd)
+    local winapi = prequire "winapi"
+    if not winapi then
+      quit('needs winapi for spawn!')
+      return false
+    end
+
+    print("spawn " .. file)
+    if not TESTING then
+      if cwd then lake.chdir(cwd) end
+      assert(winapi.shell_exec(nil, LUA_RUNNER, file, cwd))
+      if cwd then lake.chdir("<") end
+      print()
+    end
+    return true
   end
-  print("spawn " .. file)
-  if not TESTING then
-    if cwd then lake.chdir(cwd) end
-    assert(winapi.shell_exec(nil, LUA_RUNNER, file, cwd))
-    if cwd then lake.chdir("<") end
-    print()
+else
+  function spawn(file, cwd)
+    print("spawn " .. file)
+    if not TESTING then
+      assert(run(file .. ' &', cwd))
+    end
+    return true
   end
-  return true
 end
 
 function as_bool(v,d)
@@ -134,9 +149,53 @@ function as_bool(v,d)
   return false
 end
 
+--- set global variables 
+-- LUA_NEED
+-- LUA_DIR
+-- LUA_RUNNER
+-- ROOT
+-- LUADIR
+-- LIBDIR
+-- TESTDIR
+-- DOCDIR
+-- DYNAMIC
+function INITLAKEFILE()
+  if LUA_VER == '5.3' then
+    LUA_NEED   = 'lua53'
+    LUA_DIR    = ENV.LUA_DIR_5_3 or ENV.LUA_DIR
+    LUA_RUNNER = LUA_RUNNER or 'lua53'
+  elseif LUA_VER == '5.2' then
+    LUA_NEED   = 'lua52'
+    LUA_DIR    = ENV.LUA_DIR_5_2 or ENV.LUA_DIR
+    LUA_RUNNER = LUA_RUNNER or 'lua52'
+  elseif LUA_VER == '5.1' then
+    LUA_NEED   = 'lua51'
+    LUA_DIR    = ENV.LUA_DIR
+    LUA_RUNNER = LUA_RUNNER or 'lua'
+  else
+    LUA_NEED   = 'lua'
+    LUA_DIR    = ENV.LUA_DIR
+    LUA_RUNNER = LUA_RUNNER or 'lua'
+  end
+  ROOT    = ROOT    or J( LUA_DIR, 'libs', PROJECT )
+  LUADIR  = LUADIR  or J( ROOT,    'share'         )
+  LIBDIR  = LIBDIR  or J( ROOT,    'share'         )
+  TESTDIR = TESTDIR or J( ROOT,    'test'          )
+  DOCDIR  = DOCDIR  or J( ROOT,    'doc'           )
+  DYNAMIC = as_bool(DYNAMIC, false)
+end
+
 -----------------------
 -- needs --
 -----------------------
+
+lake.define_need('lua53', function()
+  return {
+    incdir = J(ENV.LUA_DIR_5_3, 'include');
+    libdir = J(ENV.LUA_DIR_5_3, 'lib');
+    libs = {'lua53'};
+  }
+end)
 
 lake.define_need('lua52', function()
   return {

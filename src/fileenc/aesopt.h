@@ -186,7 +186,7 @@ extern "C"
   #include "aes.h"
 #endif
 
-#if defined(__GNUC__) || defined(__GNU_LIBRARY__)
+#if (defined(__GNUC__) || defined(__GNU_LIBRARY__)) && !defined(WIN32)
 #  include <endian.h>
 #  include <byteswap.h>
 #elif defined(__CRYPTLIB__)
