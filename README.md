@@ -3,4 +3,6 @@
 [![Build Status](https://buildhive.cloudbees.com/job/moteus/job/lua-AesFileEncrypt/badge/icon)](https://buildhive.cloudbees.com/job/moteus/job/lua-AesFileEncrypt/)
 
 * Test passed on *WinXP/Win2k3* *VC2010Express/MinGW*
+* Test passed on *Win2k8(x64)* *MinGW W64*
+* Test passed on *Linux Mint 15 (x32)*
 * Need help to build/test on *nix platforms.
