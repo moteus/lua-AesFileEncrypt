@@ -1,6 +1,20 @@
 #ifndef _PLATFORM_BYTE_ORDER_H_
 #define _PLATFORM_BYTE_ORDER_H_
 
+/*  BYTE ORDER IN 32-BIT WORDS
+
+    To obtain the highest speed on processors with 32-bit words, this code
+    needs to determine the byte order of the target machine. The following 
+    block of code is an attempt to capture the most obvious ways in which 
+    various environemnts define byte order. It may well fail, in which case 
+    the definitions will need to be set by editing at the points marked 
+    **** EDIT HERE IF NECESSARY **** below.  My thanks to Peter Gutmann for 
+    some of these defines (from cryptlib).
+*/
+
+#define PLATFORM_BYTE_ORDER_LITTLE_ENDIAN   1234 /* byte 0 is least significant (i386) */
+#define PLATFORM_BYTE_ORDER_BIG_ENDIAN      4321 /* byte 0 is most significant (mc68k) */
+
 /*
     To obtain the highest speed on processors with 32-bit words, this code 
     needs to determine the order in which bytes are packed into such words.
@@ -22,38 +36,27 @@
 #  include <endian.h>
 #endif
 
-/*  BYTE ORDER IN 32-BIT WORDS
+#if !defined(PLATFORM_BYTE_ORDER)
 
-    To obtain the highest speed on processors with 32-bit words, this code
-    needs to determine the byte order of the target machine. The following 
-    block of code is an attempt to capture the most obvious ways in which 
-    various environemnts define byte order. It may well fail, in which case 
-    the definitions will need to be set by editing at the points marked 
-    **** EDIT HERE IF NECESSARY **** below.  My thanks to Peter Gutmann for 
-    some of these defines (from cryptlib).
-*/
+#  if defined( __alpha__ ) || defined( __alpha ) || defined( i386 )       ||   \
+      defined( __i386__ )  || defined( _M_I86 )  || defined( _M_IX86 )    ||   \
+      defined( __OS2__ )   || defined( sun386 )  || defined( __TURBOC__ ) ||   \
+      defined( vax )       || defined( vms )     || defined( VMS )        ||   \
+      defined( __VMS ) 
+#  define PLATFORM_BYTE_ORDER PLATFORM_BYTE_ORDER_LITTLE_ENDIAN
 
-#define PLATFORM_BYTE_ORDER_LITTLE_ENDIAN   1234 /* byte 0 is least significant (i386) */
-#define PLATFORM_BYTE_ORDER_BIG_ENDIAN      4321 /* byte 0 is most significant (mc68k) */
+#  endif
 
-#if defined( __alpha__ ) || defined( __alpha ) || defined( i386 )       ||   \
-    defined( __i386__ )  || defined( _M_I86 )  || defined( _M_IX86 )    ||   \
-    defined( __OS2__ )   || defined( sun386 )  || defined( __TURBOC__ ) ||   \
-    defined( vax )       || defined( vms )     || defined( VMS )        ||   \
-    defined( __VMS ) 
+#  if defined( AMIGA )    || defined( applec )  || defined( __AS400__ )  ||   \
+      defined( _CRAY )    || defined( __hppa )  || defined( __hp9000 )   ||   \
+      defined( ibm370 )   || defined( mc68000 ) || defined( m68k )       ||   \
+      defined( __MRC__ )  || defined( __MVS__ ) || defined( __MWERKS__ ) ||   \
+      defined( sparc )    || defined( __sparc)  || defined( SYMANTEC_C ) ||   \
+      defined( __TANDEM ) || defined( THINK_C ) || defined( __VMCMS__ )
 
-#define PLATFORM_BYTE_ORDER PLATFORM_BYTE_ORDER_LITTLE_ENDIAN
+#  define PLATFORM_BYTE_ORDER PLATFORM_BYTE_ORDER_BIG_ENDIAN
 
-#endif
-
-#if defined( AMIGA )    || defined( applec )  || defined( __AS400__ )  ||   \
-    defined( _CRAY )    || defined( __hppa )  || defined( __hp9000 )   ||   \
-    defined( ibm370 )   || defined( mc68000 ) || defined( m68k )       ||   \
-    defined( __MRC__ )  || defined( __MVS__ ) || defined( __MWERKS__ ) ||   \
-    defined( sparc )    || defined( __sparc)  || defined( SYMANTEC_C ) ||   \
-    defined( __TANDEM ) || defined( THINK_C ) || defined( __VMCMS__ )
-
-#define PLATFORM_BYTE_ORDER PLATFORM_BYTE_ORDER_BIG_ENDIAN
+#  endif
 
 #endif
 
@@ -115,9 +118,9 @@
 #endif
 
 // #if   (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_LITTLE_ENDIAN)
-// #  error "BIG_ENDIAN"
-// #elif (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_BIG_ENDIAN)
 // #  error "LITTLE_ENDIAN"
+// #elif (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_BIG_ENDIAN)
+// #  error "BIG_ENDIAN"
 // #else
 // #  error "UNKNOWN_ENDIAN"
 // #endif

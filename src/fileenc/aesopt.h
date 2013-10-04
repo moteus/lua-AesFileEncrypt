@@ -222,17 +222,18 @@ extern "C"
     in which case the definitions will need to be set by editing at the
     points marked **** EDIT HERE IF NECESSARY **** below.
 */
-#include "platform_byte_order.h"
-#if (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_BIG_ENDIAN)
-#  undef  PLATFORM_BYTE_ORDER 
-#  define PLATFORM_BYTE_ORDER AES_BIG_ENDIAN
-#elif (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_LITTLE_ENDIAN)
-#  undef  PLATFORM_BYTE_ORDER 
-#  define PLATFORM_BYTE_ORDER AES_LITTLE_ENDIAN
-#else
-#  error !!! unknown PLATFORM_BYTE_ORDER !!!
+#if !defined(PLATFORM_BYTE_ORDER)
+#  include "platform_byte_order.h"
+#  if (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_BIG_ENDIAN)
+#    undef  PLATFORM_BYTE_ORDER 
+#    define PLATFORM_BYTE_ORDER AES_BIG_ENDIAN
+#  elif (PLATFORM_BYTE_ORDER == PLATFORM_BYTE_ORDER_LITTLE_ENDIAN)
+#    undef  PLATFORM_BYTE_ORDER 
+#    define PLATFORM_BYTE_ORDER AES_LITTLE_ENDIAN
+#  else
+#    error !!! unknown PLATFORM_BYTE_ORDER !!!
+#  endif
 #endif
-
 
 /*  3. FUNCTIONS REQUIRED
 
