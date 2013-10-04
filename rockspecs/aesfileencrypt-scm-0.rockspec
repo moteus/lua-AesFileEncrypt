@@ -37,6 +37,7 @@ build = {
         'src/fileenc/pwd2key.c','src/fileenc/sha1.c',
         'src/AesFileEncrypt.c','src/l52util.c',
       },
+      defines = { 'USE_SHA1' },
     },
   },
 }
