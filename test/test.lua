@@ -1,9 +1,10 @@
 local HAS_RUNNER = not not lunit
 local lunit = require "lunit"
-local tutil = require "utils"
 local AesFileEncrypt = require "AesFileEncrypt"
 
-local TEST_CASE, skip = tutil.TEST_CASE, tutil.skip
+local IS_LUA52 = _VERSION >= 'Lua 5.2'
+
+local TEST_CASE = assert(lunit.TEST_CASE)
 
 function hex(str)
   return (string.gsub(str, ".", function(ch)
@@ -139,6 +140,67 @@ function test_encrypt_context()
   local edata = table.concat(edata)
   assert_equal(MAC,    hex(mac)   )
   assert_equal(etalon, hex(edata) )
+end
+
+if IS_LUA52 then
+
+function test_encrypt_writer_co()
+  local edata = ""
+
+  fenc:set_writer(coroutine.yield)
+
+  local salt, pwd_ver = fenc:open(3, pwd, SALT)
+
+  assert_string(salt, pwd_ver)
+  assert_string(pwd_ver)
+  assert_equal(hex(SALT), hex(salt))
+  assert_equal(PVER,      hex(pwd_ver))
+
+  local mac
+  local co = coroutine.create(function()
+    assert_nil(fenc:encrypt(data))
+    mac = assert_string(fenc:close())
+  end)
+
+  while(true)do
+    local status, chunk = assert_true(coroutine.resume(co))
+    if not chunk then break end
+    edata = edata .. chunk
+  end
+
+  assert_equal(MAC,    hex(mac)   )
+  assert_equal(etalon, hex(edata) )
+end
+
+function test_encrypt_context_co()
+  local edata = ""
+  local context = {}
+  fenc:set_writer( coroutine.yield, context )
+
+  local salt, pwd_ver = fenc:open(3, pwd, SALT)
+
+  assert_string(salt, pwd_ver)
+  assert_string(pwd_ver)
+  assert_equal(hex(SALT), hex(salt))
+  assert_equal(PVER,      hex(pwd_ver))
+
+  local mac
+  local co = coroutine.create(function()
+    assert_nil(fenc:encrypt(data))
+    mac = assert_string(fenc:close())
+  end)
+
+  while(true)do
+    local status, ctx, chunk = assert_true(coroutine.resume(co))
+    if not chunk then break end
+    assert_equal(context, ctx)
+    edata = edata .. chunk
+  end
+
+  assert_equal(MAC,    hex(mac)   )
+  assert_equal(etalon, hex(edata) )
+end
+
 end
 
 if not HAS_RUNNER then lunit.run() end

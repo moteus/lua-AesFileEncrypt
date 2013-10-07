@@ -2,7 +2,7 @@ PROJECT = 'AesFileEncrypt'
 
 INITLAKEFILE()
 
-DEFINES = L(DEFINES, 'USE_SHA1')
+DEFINES = L{DEFINES, 'USE_SHA1'}
 
 AesFileEncrypt = c.shared{PROJECT, 
   base     = 'src',
@@ -18,7 +18,7 @@ AesFileEncryptTest = c.program{'test',
   base     = J('src', 'fileenc');
   src      = '*';
   exclude  = 'main';
-  defines  = L(DEFINES, 'TEST');
+  defines  = L{DEFINES, 'TEST'};
   dynamic  = DYNAMIC;
   strip    = true;
 }

@@ -175,6 +175,55 @@ static int l_fcrypt_close(lua_State *L){
   return 1;
 }
 
+#if LUA_VERSION_NUM >= 502 // lua 5.2
+
+static int l_fcrypt_encryptk_impl(lua_State *L, lua_CFunction k, pfcrypt_encrypt encrypt);
+
+static int l_fcrypt_encryptk(lua_State *L){
+  return l_fcrypt_encryptk_impl(L, l_fcrypt_encryptk, fcrypt_encrypt);
+}
+
+static int l_fcrypt_decryptk(lua_State *L){
+  return l_fcrypt_encryptk_impl(L, l_fcrypt_decryptk, fcrypt_decrypt);
+}
+
+static int l_fcrypt_encryptk_impl(lua_State *L, lua_CFunction k, pfcrypt_encrypt encrypt){
+  l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
+  size_t len; const char *data = luaL_checklstring(L, 2, &len);
+  const char *b, *e = data + len;
+
+  if(LUA_OK == lua_getctx(L, NULL)){
+    lua_settop(L, 2);
+    lua_pushlightuserdata(L, data);
+  }
+  else{
+    assert(lua_gettop(L) == 3);
+  }
+
+  b = lua_touserdata(L, -1);
+
+  for(; b < e; b += ctx->buf_len){
+    size_t left = e - b;
+    if(left > ctx->buf_len) left = ctx->buf_len;
+
+    memcpy(ctx->buf, b, left);
+    encrypt((unsigned char*)&ctx->buf[0], left, ctx->ctx);
+    
+    lua_remove(L, -1);
+    lua_pushlightuserdata(L, b + ctx->buf_len);
+    
+    {
+      int n = l_fcrypt_push_cb(L, ctx);
+      lua_pushlstring(L, ctx->buf, left);
+      lua_callk(L, n, 0, 1, k);
+    }
+  }
+
+  return 0;
+}
+
+#endif
+
 static int l_fcrypt_encrypt_impl(lua_State *L, pfcrypt_encrypt encrypt){
   l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
   size_t len; const char *data = luaL_checklstring(L, 2, &len);
@@ -206,10 +255,22 @@ static int l_fcrypt_encrypt_impl(lua_State *L, pfcrypt_encrypt encrypt){
 }
 
 static int l_fcrypt_encrypt(lua_State *L){
+#if LUA_VERSION_NUM >= 502 // lua 5.2
+  l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
+  if(ctx->cb_ref != LUA_NOREF)
+    return l_fcrypt_encryptk(L);
+#endif
+
   return l_fcrypt_encrypt_impl(L, fcrypt_encrypt);
 }
 
 static int l_fcrypt_decrypt(lua_State *L){
+#if LUA_VERSION_NUM >= 502 // lua 5.2
+  l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
+  if(ctx->cb_ref != LUA_NOREF)
+    return l_fcrypt_decryptk(L);
+#endif
+
   return l_fcrypt_encrypt_impl(L, fcrypt_decrypt);
 }
 
