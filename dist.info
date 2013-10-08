@@ -9,5 +9,5 @@ license = "GPL"
 url = "http://www.luadist.org"
 
 depends = {
-  "lua ~= 5.1",
+  "lua ~> 5.1, ~> 5.2",
 }
