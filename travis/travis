@@ -1,0 +1,77 @@
+#!/bin/sh -ex
+# Utility functions for use with Travis CI (travis-ci.org).
+#
+# Copyright (C) 2012 LuaDist.
+# Created by David Manura.
+# Redistribution and use of this file is allowed according to the terms of the MIT license.
+# For details see the COPYRIGHT file distributed with LuaDist.
+# Please note that the package source code is licensed under its own license.
+
+# recommend TOOL/COMPILER environment variable combinations for standard rules:
+#- TOOL="gcc"                  # Use native compiler (GCC usually)
+#- TOOL="clang"                # Use clang
+#- TOOL="i686-w64-mingw32"     # 32bit MinGW
+#- TOOL="x86_64-w64-mingw32"   # 64bit MinGW
+#- TOOL="arm-linux-gnueabihf"  # ARM hard-float (hf), linux
+#- TOOL="i586-mingw32msvc"     # old 32bit MinGW
+
+uname -a   # details about system being built on.
+
+export TOOLFILE="$HOME/$TOOL.cmake"
+
+case "$1" in
+  "install")
+    # Make sure CMake is present
+    which cmake || sudo apt-get -qq install cmake
+
+    # Make sure TOOL is available
+    case "$TOOL" in
+      "gcc") which gcc || sudo apt-get -f -y install build-essential ;;
+      "clang") which clang || sudo apt-get -f -y install clang && export CC=clang;;
+      "gfortran") which gfortran || sudo apt-get -f -y install gfortran ;;
+      "i586-mingw32msvc") which $TOOL-gcc || sudo apt-get -f -y install gcc-mingw32 && CMAKE_TOOL=$TOOL ;;
+      "x86_64-w64-mingw32" | "i686-w64-mingw32") which $TOOL-gcc || sudo apt-get -f -y install gcc-mingw-w64-i686  gcc-mingw-w64-x86-64 gcc-mingw-w64 binutils-mingw-w64-x86-64 binutils-mingw-w64-i686 && CMAKE_TOOL=$TOOL ;;
+      "arm-linux-gnueabihf") which $TOOL-gcc || sudo apt-get -f -y install gcc-arm-linux-gnueabihf && CMAKE_TOOL=$TOOL ;;
+      * ) echo "ASSERT: $TOOL"; exit 1 ;;
+    esac
+
+    # Generate CMake TOOLFILE for Cross Compilation
+    if [ $CMAKE_TOOL ]; then
+      echo "set(toolchain $CMAKE_TOOL)" > $TOOLFILE
+      echo 'set(toolchain_ ${toolchain}-)' >> $TOOLFILE
+      case "$CMAKE_TOOL" in
+        *linux*) echo "set(CMAKE_SYSTEM_NAME Linux)"   >> $TOOLFILE ;;
+        *mingw*) echo "set(CMAKE_SYSTEM_NAME Windows)" >> $TOOLFILE ;;
+      esac
+      echo 'set(CMAKE_C_COMPILER ${toolchain_}gcc)' >> $TOOLFILE
+      echo 'set(CMAKE_CXX_COMPILER ${toolchain_}g++)' >> $TOOLFILE
+      echo 'set(CMAKE_RC_COMPILER ${toolchain_}windres )' >> $TOOLFILE
+      echo 'set(CMAKE_RC_OUTPUT_EXTENSION .obj)' >> $TOOLFILE
+      echo 'set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> -O coff <FLAGS> <DEFINES> <SOURCE> <OBJECT>")' >> $TOOLFILE
+      echo 'set(CMAKE_FIND_ROOT_PATH /usr/${_toolchain}/ ${CMAKE_INSTALL_PREFIX})' >> $TOOLFILE
+      echo 'set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)' >> $TOOLFILE
+      echo 'set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)' >> $TOOLFILE
+    else
+      echo '' > $TOOLFILE
+    fi
+  ;;
+  "bootstrap")
+    git clone --recursive git://github.com/LuaDist/bootstrap.git _luadist >/dev/null 2>&1
+    (cd _luadist && ./bootstrap >/dev/null 2>&1)
+    ln -s "$PWD/_luadist/_install/bin/luadist" ~/luadist
+  ;;
+  "build")
+    cd $TRAVIS_BUILD_DIR
+    mkdir _build
+    cd _build
+    cmake .. -DCMAKE_TOOLCHAIN_FILE=$TOOLFILE
+    cmake --build . --target install
+  ;;
+  "test")
+    echo 'test'
+  ;;
+  *)
+    echo "travis: missing argument $1"
+    exit 1
+  ;;
+esac

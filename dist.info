@@ -1,0 +1,13 @@
+-- LuaDist info file
+name = "AesFileEncrypt"
+version = "0.1.1"
+
+desc = "A simple file encryption library"
+maintainer = "Alexey Melnichuk"
+author = "Alexey Melnichuk"
+license = "GPL"
+url = "http://www.luadist.org"
+
+depends = {
+  "lua ~= 5.1",
+}
