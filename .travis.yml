@@ -31,7 +31,12 @@ before_script:
 
 # Build the module
 script:
-  - ~/_tools/travis/travis build
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir _build
+  - cd _build
+  - cmake .. -DCMAKE_TOOLCHAIN_FILE=$TOOLFILE
+  - cmake --build . --target install
+  # - ~/_tools/travis/travis build
 
 # Execute additional tests or commands
 after_script:
