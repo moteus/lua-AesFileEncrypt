@@ -1,9 +1,9 @@
 package = "AesFileEncrypt"
-version = "scm-0"
+version = "0.1.1-1"
 
 source = {
-  url = "https://github.com/moteus/lua-AesFileEncrypt/archive/master.zip",
-  dir = "lua-AesFileEncrypt-master",
+  url = "https://github.com/moteus/lua-AesFileEncrypt/archive/v0.1.1.zip",
+  dir = "lua-AesFileEncrypt-0.1.1",
 }
 
 description = {

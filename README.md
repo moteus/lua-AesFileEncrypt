@@ -4,5 +4,6 @@
 
 * Test passed on *WinXP/Win2k3 (x32)* *VC2010Express/MinGW*
 * Test passed on *Win2k8(x64)* *MinGW W64*
+* Test passed on *Win2k12(x64)* *MinGW W64/VC2012Express*
 * Test passed on *Linux Mint 15 (x32)*
 * Need help to build/test on *nix platforms.
