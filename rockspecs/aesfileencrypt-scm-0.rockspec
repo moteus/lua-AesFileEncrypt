@@ -2,8 +2,8 @@ package = "AesFileEncrypt"
 version = "scm-0"
 
 source = {
-  url = "https://github.com/moteus/lua-AesFileEncrypt/archive/master.zip",
-  dir = "lua-AesFileEncrypt-master",
+  url = "git_recursive://github.com/moteus/lua-AesFileEncrypt.git",
+  branch = "bgcrypto",
 }
 
 description = {
@@ -24,7 +24,6 @@ dependencies = {
   "lua >= 5.1",
 }
 
-
 local AES_DIR = 'externals/bgcrypto/aes'
 local SHA_DIR = 'externals/bgcrypto/sha'
 local ENC_DIR = 'externals/bgcrypto/fileenc'
@@ -38,8 +37,9 @@ build = {
     AesFileEncrypt = {
       sources = {
         AES_DIR .. '/aescrypt.c', AES_DIR .. '/aeskey.c', AES_DIR .. '/aestab.c',
-        SHA_DIR .. '/hmac.c', SHA_DIR .. '/sha1.c', SHA_DIR .. '/pwd2key.c',
-        ENC_DIR .. '/fileenc.c', 'src/AesFileEncrypt.c','src/l52util.c',
+        AES_DIR .. '/aes_modes.c', SHA_DIR .. '/hmac.c', SHA_DIR .. '/sha1.c',
+        SHA_DIR .. '/pwd2key.c', ENC_DIR .. '/fileenc.c',
+        'src/AesFileEncrypt.c','src/l52util.c',
       },
       defines = { 'USE_SHA1' },
       incdirs = { AES_DIR, SHA_DIR, ENC_DIR },

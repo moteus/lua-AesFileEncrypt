@@ -294,6 +294,17 @@ static const struct luaL_Reg l_fcrypt_meth[] = {
 };
 
 int luaopen_AesFileEncrypt(lua_State*L){
+  if(
+    (EXIT_SUCCESS != aes_test_alignment_detection(4 )) ||
+    (EXIT_SUCCESS != aes_test_alignment_detection(8 )) ||
+    (EXIT_SUCCESS != aes_test_alignment_detection(16))
+  ){
+    lua_pushliteral(L, "ERROR. Invalid alignment. Please contact with author.");
+    return lua_error(L);
+  }
+
+  aes_init();
+
   lutil_createmetap(L, L_FCRYPT_CTX, l_fcrypt_meth, 0);
   lua_newtable(L);
   luaL_setfuncs(L, l_fcrypt_lib, 0);

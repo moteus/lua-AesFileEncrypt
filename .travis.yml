@@ -11,6 +11,7 @@ env:
 branches:
   only:
     - master
+    - bgcrypto
 
 before_install:
   - if [ $LUA = "luajit" ]; then

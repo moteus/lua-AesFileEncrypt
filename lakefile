@@ -10,13 +10,14 @@ SHA_DIR=J(BGCRYPTO_DIR, 'sha')
 ENC_DIR=J(BGCRYPTO_DIR, 'fileenc')
 
 BGCRYPTO_SRC = {
-  J(AES_DIR,'aescrypt');
-  J(AES_DIR,'aeskey'  );
-  J(AES_DIR,'aestab'  );
-  J(SHA_DIR,'hmac'    );
-  J(SHA_DIR,'sha1'    );
-  J(SHA_DIR,'pwd2key' );
-  J(ENC_DIR,'fileenc' );
+  J(AES_DIR,'aescrypt' );
+  J(AES_DIR,'aes_modes');
+  J(AES_DIR,'aeskey'   );
+  J(AES_DIR,'aestab'   );
+  J(SHA_DIR,'hmac'     );
+  J(SHA_DIR,'sha1'     );
+  J(SHA_DIR,'pwd2key'  );
+  J(ENC_DIR,'fileenc'  );
 }
 
 BGCRYPTO_INC = {AES_DIR, SHA_DIR, ENC_DIR}
