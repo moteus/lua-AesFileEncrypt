@@ -1,5 +1,5 @@
 #include "lua.h"
-#include "fileenc/fileenc.h"
+#include "fileenc.h"
 #include "l52util.h"
 #include <assert.h>
 

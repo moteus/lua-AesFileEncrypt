@@ -4,21 +4,42 @@ INITLAKEFILE()
 
 DEFINES = L{DEFINES, 'USE_SHA1'}
 
-AesFileEncrypt = c.shared{PROJECT, 
-  base     = 'src',
-  src      = {'fileenc/*.c', '*.c'},
-  exclude  = {'fileenc/main'},
-  needs    = {LUA_NEED},
-  defines  = DEFINES,
-  dynamic  = DYNAMIC,
-  strip    = true,
+BGCRYPTO_DIR = J('externals', 'bgcrypto')
+AES_DIR=J(BGCRYPTO_DIR, 'aes')
+SHA_DIR=J(BGCRYPTO_DIR, 'sha')
+ENC_DIR=J(BGCRYPTO_DIR, 'fileenc')
+
+BGCRYPTO_SRC = {
+  J(AES_DIR,'aescrypt');
+  J(AES_DIR,'aeskey'  );
+  J(AES_DIR,'aestab'  );
+  J(SHA_DIR,'hmac'    );
+  J(SHA_DIR,'sha1'    );
+  J(SHA_DIR,'pwd2key' );
+  J(ENC_DIR,'fileenc' );
 }
 
+BGCRYPTO_INC = {AES_DIR, SHA_DIR, ENC_DIR}
+
+AesFileEncrypt = c.shared{PROJECT, 
+  base     = '.';
+  src      = L{BGCRYPTO_SRC, 'src/*.c'};
+  needs    = {LUA_NEED};
+  defines  = DEFINES;
+  incdir   = BGCRYPTO_INC;
+  dynamic  = DYNAMIC;
+  strip    = true;
+}
+
+-- enforce lake to compile sources with diff flags
+BGCRYPTO_SRC2 = each_join('..', L{BGCRYPTO_SRC})
+BGCRYPTO_INC2 = each_join('..', L{BGCRYPTO_INC})
+
 AesFileEncryptTest = c.program{'test',
-  base     = J('src', 'fileenc');
-  src      = '*';
-  exclude  = 'main';
+  base     = 'src';
+  src      = BGCRYPTO_SRC2;
   defines  = L{DEFINES, 'TEST'};
+  incdir   = BGCRYPTO_INC2,
   dynamic  = DYNAMIC;
   strip    = true;
 }
