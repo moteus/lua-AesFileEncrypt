@@ -1,7 +1,6 @@
 /*
  ---------------------------------------------------------------------------
- Copyright (c) 2002, Dr Brian Gladman <                 >, Worcester, UK.
- All rights reserved.
+ Copyright (c) 2002, Dr Brian Gladman, Worcester, UK.   All rights reserved.
 
  LICENSE TERMS
 
@@ -37,12 +36,14 @@
 #ifndef PWD2KEY_H
 #define PWD2KEY_H
 
+#include "brg_types.h"
+
 #if defined(__cplusplus)
 extern "C"
 {
 #endif
 
-void derive_key(
+VOID_RETURN derive_key(
         const unsigned char pwd[],   /* the PASSWORD, and   */
         unsigned int pwd_len,        /*    its length       */ 
         const unsigned char salt[],  /* the SALT and its    */

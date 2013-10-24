@@ -1,7 +1,6 @@
 /*
  ---------------------------------------------------------------------------
- Copyright (c) 2002, Dr Brian Gladman <                 >, Worcester, UK.
- All rights reserved.
+ Copyright (c) 2002, Dr Brian Gladman, Worcester, UK.   All rights reserved.
 
  LICENSE TERMS
 
@@ -37,6 +36,7 @@
 #define _HMAC_H
 
 #include <memory.h>
+#include "brg_types.h"
 
 #if defined(__cplusplus)
 extern "C"
@@ -83,15 +83,15 @@ typedef struct
     unsigned long   klen;
 } hmac_ctx;
 
-void hmac_sha_begin(hmac_ctx cx[1]);
+VOID_RETURN hmac_sha_begin(hmac_ctx cx[1]);
 
-int  hmac_sha_key(const unsigned char key[], unsigned long key_len, hmac_ctx cx[1]);
+INT_RETURN  hmac_sha_key(const unsigned char key[], unsigned long key_len, hmac_ctx cx[1]);
 
-void hmac_sha_data(const unsigned char data[], unsigned long data_len, hmac_ctx cx[1]);
+VOID_RETURN hmac_sha_data(const unsigned char data[], unsigned long data_len, hmac_ctx cx[1]);
 
-void hmac_sha_end(unsigned char mac[], unsigned long mac_len, hmac_ctx cx[1]);
+VOID_RETURN hmac_sha_end(unsigned char mac[], unsigned long mac_len, hmac_ctx cx[1]);
 
-void hmac_sha(const unsigned char key[], unsigned long key_len,
+VOID_RETURN hmac_sha(const unsigned char key[], unsigned long key_len,
           const unsigned char data[], unsigned long data_len,
           unsigned char mac[], unsigned long mac_len);
 
@@ -99,12 +99,4 @@ void hmac_sha(const unsigned char key[], unsigned long key_len,
 }
 #endif
 
-#endif
-
-#ifndef hmac_sha1_begin
-#define hmac_sha1_begin  hmac_sha_begin
-#define hmac_sha1_key    hmac_sha_key
-#define hmac_sha1_data   hmac_sha_data
-#define hmac_sha1_end    hmac_sha_end
-#define hmac_sha1        hmac_sha
 #endif

@@ -7,7 +7,6 @@ DEFINES = L{DEFINES, 'USE_SHA1'}
 AesFileEncrypt = c.shared{PROJECT, 
   base     = 'src',
   src      = {'fileenc/*.c', '*.c'},
-  exclude  = {'fileenc/main'},
   needs    = {LUA_NEED},
   defines  = DEFINES,
   dynamic  = DYNAMIC,
@@ -16,8 +15,7 @@ AesFileEncrypt = c.shared{PROJECT,
 
 AesFileEncryptTest = c.program{'test',
   base     = J('src', 'fileenc');
-  src      = '*';
-  exclude  = 'main';
+  src      = '*.c';
   defines  = L{DEFINES, 'TEST'};
   dynamic  = DYNAMIC;
   strip    = true;

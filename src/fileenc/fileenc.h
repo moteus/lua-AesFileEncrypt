@@ -82,9 +82,9 @@ extern "C"
 #endif
 
 typedef struct
-{   unsigned char   nonce[BLOCK_SIZE];          /* the CTR nonce          */
-    unsigned char   encr_bfr[BLOCK_SIZE];       /* encrypt buffer         */
-    aes_ctx         encr_ctx[1];                /* encryption context     */
+{   unsigned char   nonce[AES_BLOCK_SIZE];          /* the CTR nonce          */
+    unsigned char   encr_bfr[AES_BLOCK_SIZE];       /* encrypt buffer         */
+    aes_encrypt_ctx encr_ctx[1];                /* encryption context     */
     hmac_ctx        auth_ctx[1];                /* authentication context */
     unsigned int    encr_pos;                   /* block position (enc)   */
     unsigned int    pwd_len;                    /* password length        */
@@ -93,7 +93,7 @@ typedef struct
 
 /* initialise file encryption or decryption */
 
-int fcrypt_init(
+INT_RETURN fcrypt_init(
     int mode,                               /* the mode to be used (input)          */
     const unsigned char pwd[],              /* the user specified password (input)  */
     unsigned int pwd_len,                   /* the length of the password (input)   */
@@ -105,13 +105,13 @@ int fcrypt_init(
 
 /* perform 'in place' encryption or decryption and authentication               */
 
-void fcrypt_encrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1]);
-void fcrypt_decrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1]);
+VOID_RETURN fcrypt_encrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1]);
+VOID_RETURN fcrypt_decrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1]);
 
 /* close encryption/decryption and return the MAC value */
 /* the return value is the length of the MAC            */
 
-int fcrypt_end(unsigned char mac[],     /* the MAC value (output)   */
+INT_RETURN fcrypt_end(unsigned char mac[],     /* the MAC value (output)   */
                fcrypt_ctx cx[1]);       /* the context (input)      */
 
 #if defined(__cplusplus)

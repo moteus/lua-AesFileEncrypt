@@ -54,13 +54,13 @@ static void encr_data(unsigned char data[], unsigned long d_len, fcrypt_ctx cx[1
 
     while(i < d_len)
     {
-        if(pos == BLOCK_SIZE)
+        if(pos == AES_BLOCK_SIZE)
         {   unsigned int j = 0;
             /* increment encryption nonce   */
             while(j < 8 && !++cx->nonce[j])
                 ++j;
             /* encrypt the nonce to form next xor buffer    */
-            aes_encrypt_block(cx->nonce, cx->encr_bfr, cx->encr_ctx);
+            aes_encrypt(cx->nonce, cx->encr_bfr, cx->encr_ctx);
             pos = 0;
         }
 
@@ -95,17 +95,17 @@ int fcrypt_init(
                         kbuf, 2 * KEY_LENGTH(mode) + PWD_VER_LENGTH);
 
     /* initialise the encryption nonce and buffer pos   */
-    cx->encr_pos = BLOCK_SIZE;
+    cx->encr_pos = AES_BLOCK_SIZE;
     /* if we need a random component in the encryption  */
     /* nonce, this is where it would have to be set     */
-    memset(cx->nonce, 0, BLOCK_SIZE * sizeof(unsigned char));
+    memset(cx->nonce, 0, AES_BLOCK_SIZE * sizeof(unsigned char));
 
     /* initialise for encryption using key 1            */
-    aes_set_encrypt_key(kbuf, KEY_LENGTH(mode), cx->encr_ctx);
+    aes_encrypt_key(kbuf, KEY_LENGTH(mode), cx->encr_ctx);
 
     /* initialise for authentication using key 2        */
-    hmac_sha1_begin(cx->auth_ctx);
-    hmac_sha1_key(kbuf + KEY_LENGTH(mode), KEY_LENGTH(mode), cx->auth_ctx);
+    hmac_sha_begin(cx->auth_ctx);
+    hmac_sha_key(kbuf + KEY_LENGTH(mode), KEY_LENGTH(mode), cx->auth_ctx);
 
 #ifdef PASSWORD_VERIFIER
     memcpy(pwd_ver, kbuf + 2 * KEY_LENGTH(mode), PWD_VER_LENGTH);
@@ -119,14 +119,14 @@ int fcrypt_init(
 void fcrypt_encrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1])
 {
     encr_data(data, data_len, cx);
-    hmac_sha1_data(data, data_len, cx->auth_ctx);
+    hmac_sha_data(data, data_len, cx->auth_ctx);
 }
 
 /* perform 'in place' authentication and decryption */
 
 void fcrypt_decrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1])
 {
-    hmac_sha1_data(data, data_len, cx->auth_ctx);
+    hmac_sha_data(data, data_len, cx->auth_ctx);
     encr_data(data, data_len, cx);
 }
 
@@ -134,7 +134,7 @@ void fcrypt_decrypt(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1
 
 int fcrypt_end(unsigned char mac[], fcrypt_ctx cx[1])
 {
-    hmac_sha1_end(mac, MAC_LENGTH(cx->mode), cx->auth_ctx);
+    hmac_sha_end(mac, MAC_LENGTH(cx->mode), cx->auth_ctx);
     return MAC_LENGTH(cx->mode);    /* return MAC length in bytes   */
 }
 
