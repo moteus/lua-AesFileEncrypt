@@ -33,7 +33,7 @@ build = {
     AesFileEncrypt = {
       sources = {
         'src/fileenc/aescrypt.c','src/fileenc/aeskey.c','src/fileenc/aestab.c',
-        'src/fileenc/fileenc.c','src/fileenc/hmac.c','src/fileenc/prng.c',
+        'src/fileenc/fileenc.c','src/fileenc/hmac.c','src/fileenc/aes_modes.c',
         'src/fileenc/pwd2key.c','src/fileenc/sha1.c',
         'src/AesFileEncrypt.c','src/l52util.c',
       },
