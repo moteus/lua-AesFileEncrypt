@@ -34,7 +34,12 @@ install:
   - sudo luarocks install lunitx
   - sudo luarocks make rockspecs/aesfileencrypt-scm-0.rockspec
 
-script: "cd test && lunit.sh -i lua$LUA_SFX test.lua"
+script:
+  - cd test
+  - lunit.sh -i lua$LUA_SFX test.lua
+  - sudo luarocks remove aesfileencrypt
+  - sudo luarocks build rockspecs/aesfileencrypt-scm-0.rockspec
+  - lunit.sh -i lua$LUA_SFX test.lua
 
 notifications:
   email:

@@ -1,6 +1,6 @@
 
 --- Fetch back-end for retrieving sources from GIT.
-module("luarocks.fetch.git", package.seeall)
+module("luarocks.fetch.git_recursive", package.seeall)
 
 local fs = require("luarocks.fs")
 local dir = require("luarocks.dir")
