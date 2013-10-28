@@ -4,10 +4,10 @@
 
 local AesFileEncrypt = require "AesFileEncrypt"
 
-local PVER_LENGTH = 2
-local MAC_LENGTH  = 10
-local AES256      = 3
-local SALT_LENGTH = 16
+local PVER_LENGTH = AesFileEncrypt.VER_LENGTH
+local AES256      = AesFileEncrypt.AES256
+local MAC_LENGTH  = AesFileEncrypt.AES256_MAC_LENGTH
+local SALT_LENGTH = AesFileEncrypt.AES256_SALT_LENGTH
 
 local function co_reader(fn)
   local sender, err = coroutine.create(function ()

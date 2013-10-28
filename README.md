@@ -6,4 +6,4 @@
 * Test passed on *Win2k8(x64)* *MinGW W64*
 * Test passed on *Win2k12(x64)* *MinGW W64/VC2012Express*
 * Test passed on *Linux Mint 15 (x32)*
-* Need help to build/test on *nix platforms.
+* Test passed on *Linux Debian 3.9.5 x86_64 GNU/Linux*

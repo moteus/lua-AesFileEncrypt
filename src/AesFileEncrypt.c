@@ -3,6 +3,41 @@
 #include "l52util.h"
 #include <assert.h>
 
+#define L_VERSION_MAJOR 0
+#define L_VERSION_MINOR 2
+#define L_VERSION_PATCH 0
+#define L_VERSION_COMMENT "dev"
+
+static int l_push_version(lua_State *L){
+  lua_pushnumber(L, L_VERSION_MAJOR);
+  lua_pushliteral(L, ".");
+  lua_pushnumber(L, L_VERSION_MINOR);
+  lua_pushliteral(L, ".");
+  lua_pushnumber(L, L_VERSION_PATCH);
+#ifdef L_VERSION_COMMENT
+  if(L_VERSION_COMMENT[0]){
+    lua_pushliteral(L, "-"L_VERSION_COMMENT);
+    lua_concat(L, 6);
+  }
+  else
+#endif
+  lua_concat(L, 5);
+  return 1;
+}
+
+static int l_version(lua_State *L){
+  lua_pushnumber(L, L_VERSION_MAJOR);
+  lua_pushnumber(L, L_VERSION_MINOR);
+  lua_pushnumber(L, L_VERSION_PATCH);
+#ifdef L_VERSION_COMMENT
+  if(L_VERSION_COMMENT[0]){
+    lua_pushliteral(L, L_VERSION_COMMENT);
+    return 4;
+  }
+#endif
+  return 3;
+}
+
 static const char *L_FCRYPT_CTX = "AES File Encription";
 
 #define FLAG_TYPE unsigned char
@@ -275,7 +310,8 @@ static int l_fcrypt_decrypt(lua_State *L){
 }
 
 static const struct luaL_Reg l_fcrypt_lib[] = {
-  {"new", l_fcrypt_new},
+  { "version", l_version    },
+  { "new",     l_fcrypt_new },
   {NULL, NULL}
 };
 
@@ -308,5 +344,20 @@ int luaopen_AesFileEncrypt(lua_State*L){
   lutil_createmetap(L, L_FCRYPT_CTX, l_fcrypt_meth, 0);
   lua_newtable(L);
   luaL_setfuncs(L, l_fcrypt_lib, 0);
+
+  lua_pushliteral(L, "_VERSION");
+  l_push_version(L);
+  lua_rawset(L, -3);
+
+  lua_pushnumber(L, 1); lua_setfield(L, -2, "AES128");
+  lua_pushnumber(L, 2); lua_setfield(L, -2, "AES192");
+  lua_pushnumber(L, 3); lua_setfield(L, -2, "AES256");
+  lua_pushnumber(L, PWD_VER_LENGTH); lua_setfield(L, -2, "VER_LENGTH");
+  lua_pushnumber(L, SALT_LENGTH(1)); lua_setfield(L, -2, "AES128_SALT_LENGTH");
+  lua_pushnumber(L, SALT_LENGTH(2)); lua_setfield(L, -2, "AES192_SALT_LENGTH");
+  lua_pushnumber(L, SALT_LENGTH(3)); lua_setfield(L, -2, "AES256_SALT_LENGTH");
+  lua_pushnumber(L, MAC_LENGTH (1)); lua_setfield(L, -2, "AES128_MAC_LENGTH" );
+  lua_pushnumber(L, MAC_LENGTH (2)); lua_setfield(L, -2, "AES192_MAC_LENGTH" );
+  lua_pushnumber(L, MAC_LENGTH (3)); lua_setfield(L, -2, "AES256_MAC_LENGTH" );
   return 1;
 }
