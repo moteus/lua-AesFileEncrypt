@@ -4,9 +4,9 @@
 #include <assert.h>
 
 #define L_VERSION_MAJOR 0
-#define L_VERSION_MINOR 2
-#define L_VERSION_PATCH 0
-#define L_VERSION_COMMENT "dev"
+#define L_VERSION_MINOR 1
+#define L_VERSION_PATCH 2
+// #define L_VERSION_COMMENT "dev"
 
 static int l_push_version(lua_State *L){
   lua_pushnumber(L, L_VERSION_MAJOR);
@@ -229,7 +229,7 @@ static int l_fcrypt_encryptk_impl(lua_State *L, lua_CFunction k, pfcrypt_encrypt
 
   if(LUA_OK == lua_getctx(L, NULL)){
     lua_settop(L, 2);
-    lua_pushlightuserdata(L, data);
+    lua_pushlightuserdata(L, (char *)data);
   }
   else{
     assert(lua_gettop(L) == 3);
@@ -245,7 +245,7 @@ static int l_fcrypt_encryptk_impl(lua_State *L, lua_CFunction k, pfcrypt_encrypt
     encrypt((unsigned char*)&ctx->buf[0], left, ctx->ctx);
     
     lua_remove(L, -1);
-    lua_pushlightuserdata(L, b + ctx->buf_len);
+    lua_pushlightuserdata(L, (char *)b + ctx->buf_len);
     
     {
       int n = l_fcrypt_push_cb(L, ctx);
