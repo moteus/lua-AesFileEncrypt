@@ -1,0 +1,12 @@
+name = "AesFileEncrypt"
+version = "0.1.2"
+
+desc = "A simple file encryption library"
+author = "Alexey Melnichuk"
+license = "GPL"
+url = "https://github.com/moteus/lua-AesFileEncrypt"
+maintainer = "Alexey Melnichuk"
+
+depends = {
+  "lua >= 5.1"
+}
