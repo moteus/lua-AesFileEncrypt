@@ -7,3 +7,7 @@
 * Test passed on *Win2k12(x64)* *MinGW W64/VC2012Express*
 * Test passed on *Linux Mint 15 (x32)*
 * Test passed on *Linux Debian 3.9.5 x86_64 GNU/Linux*
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/moteus/lua-aesfileencrypt/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
