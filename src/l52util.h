@@ -11,13 +11,17 @@
 // luaL_setfuncs
 // lua_absindex
 
+#ifndef lua_objlen
 
 #define lua_objlen      lua_rawlen
 
+#endif
 int   luaL_typerror (lua_State *L, int narg, const char *tname);
 
+#ifndef luaL_register
 void luaL_register (lua_State *L, const char *libname, const luaL_Reg *l);
 
+#endif
 #else                      // lua 5.1
 
 // functions form lua 5.2
