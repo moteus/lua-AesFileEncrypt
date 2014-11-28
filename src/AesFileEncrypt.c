@@ -46,6 +46,18 @@ static const char *L_FCRYPT_CTX = "AES File Encription";
 
 #define MAX_MAC_LENGTH 10
 
+#if LUA_VERSION_NUM >= 503 /* Lua 5.3 */
+
+#ifndef luaL_checkint
+#define luaL_checkint luaL_checkinteger
+#endif
+
+#ifndef luaL_optint
+#define luaL_optint luaL_optinteger
+#endif
+
+#endif
+
 typedef void (*pfcrypt_encrypt)(unsigned char data[], unsigned int data_len, fcrypt_ctx cx[1]);
 
 typedef struct l_fcrypt_ctx_tag{
@@ -210,24 +222,44 @@ static int l_fcrypt_close(lua_State *L){
   return 1;
 }
 
-#if LUA_VERSION_NUM >= 502 // lua 5.2
+#if LUA_VERSION_NUM >= 502 /* Lua 5.2 */
 
-static int l_fcrypt_encryptk_impl(lua_State *L, lua_CFunction k, pfcrypt_encrypt encrypt);
+#if LUA_VERSION_NUM < 503 /* Lua 5.2 */
 
-static int l_fcrypt_encryptk(lua_State *L){
-  return l_fcrypt_encryptk_impl(L, l_fcrypt_encryptk, fcrypt_encrypt);
+typedef int lua_KContext;
+
+typedef lua_CFunction lua_KFunction;
+
+#endif
+
+#if LUA_VERSION_NUM < 503
+#  define KFUNCTION(F) F(lua_State *L)
+#else
+#  define KFUNCTION(F) F(lua_State *L, int status, lua_KContext ctx)
+#endif
+
+static int l_fcrypt_encryptk_impl(lua_State *L, int status, lua_KContext lctx, lua_KFunction k, pfcrypt_encrypt encrypt);
+
+static int KFUNCTION(l_fcrypt_encryptk){
+#if LUA_VERSION_NUM < 503
+  lua_KContext ctx; int status = lua_getctx(L, &ctx);
+#endif
+  return l_fcrypt_encryptk_impl(L, status, ctx, l_fcrypt_encryptk, fcrypt_encrypt);
 }
 
-static int l_fcrypt_decryptk(lua_State *L){
-  return l_fcrypt_encryptk_impl(L, l_fcrypt_decryptk, fcrypt_decrypt);
+static int KFUNCTION(l_fcrypt_decryptk){
+#if LUA_VERSION_NUM < 503
+  lua_KContext ctx; int status = lua_getctx(L, &ctx);
+#endif
+  return l_fcrypt_encryptk_impl(L, status, ctx, l_fcrypt_decryptk, fcrypt_decrypt);
 }
 
-static int l_fcrypt_encryptk_impl(lua_State *L, lua_CFunction k, pfcrypt_encrypt encrypt){
+static int l_fcrypt_encryptk_impl(lua_State *L, int status, lua_KContext lctx, lua_KFunction k, pfcrypt_encrypt encrypt){
   l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
   size_t len; const char *data = luaL_checklstring(L, 2, &len);
   const char *b, *e = data + len;
 
-  if(LUA_OK == lua_getctx(L, NULL)){
+  if(LUA_OK == status){
     lua_settop(L, 2);
     lua_pushlightuserdata(L, (char *)data);
   }
@@ -293,7 +325,11 @@ static int l_fcrypt_encrypt(lua_State *L){
 #if LUA_VERSION_NUM >= 502 // lua 5.2
   l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
   if(ctx->cb_ref != LUA_NOREF)
-    return l_fcrypt_encryptk(L);
+    return l_fcrypt_encryptk(L
+#if LUA_VERSION_NUM >= 503
+      ,LUA_OK, 0
+#endif
+    );
 #endif
 
   return l_fcrypt_encrypt_impl(L, fcrypt_encrypt);
@@ -303,7 +339,11 @@ static int l_fcrypt_decrypt(lua_State *L){
 #if LUA_VERSION_NUM >= 502 // lua 5.2
   l_fcrypt_ctx *ctx = l_getctx_at(L, 1);
   if(ctx->cb_ref != LUA_NOREF)
-    return l_fcrypt_decryptk(L);
+    return l_fcrypt_decryptk(L
+#if LUA_VERSION_NUM >= 503
+      ,LUA_OK, 0
+#endif
+    );
 #endif
 
   return l_fcrypt_encrypt_impl(L, fcrypt_decrypt);

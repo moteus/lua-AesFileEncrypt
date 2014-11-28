@@ -1,6 +1,6 @@
 cmake_minimum_required ( VERSION 2.8 )
 
-project ( pdh C )
+project ( AesFileEncrypt C )
 include ( cmake/dist.cmake )
 include ( lua )
 
