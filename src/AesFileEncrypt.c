@@ -5,15 +5,15 @@
 
 #define L_VERSION_MAJOR 0
 #define L_VERSION_MINOR 1
-#define L_VERSION_PATCH 2
+#define L_VERSION_PATCH 3
 // #define L_VERSION_COMMENT "dev"
 
 static int l_push_version(lua_State *L){
-  lua_pushnumber(L, L_VERSION_MAJOR);
+  lua_pushinteger(L, L_VERSION_MAJOR);
   lua_pushliteral(L, ".");
-  lua_pushnumber(L, L_VERSION_MINOR);
+  lua_pushinteger(L, L_VERSION_MINOR);
   lua_pushliteral(L, ".");
-  lua_pushnumber(L, L_VERSION_PATCH);
+  lua_pushinteger(L, L_VERSION_PATCH);
 #ifdef L_VERSION_COMMENT
   if(L_VERSION_COMMENT[0]){
     lua_pushliteral(L, "-"L_VERSION_COMMENT);
@@ -26,9 +26,9 @@ static int l_push_version(lua_State *L){
 }
 
 static int l_version(lua_State *L){
-  lua_pushnumber(L, L_VERSION_MAJOR);
-  lua_pushnumber(L, L_VERSION_MINOR);
-  lua_pushnumber(L, L_VERSION_PATCH);
+  lua_pushinteger(L, L_VERSION_MAJOR);
+  lua_pushinteger(L, L_VERSION_MINOR);
+  lua_pushinteger(L, L_VERSION_PATCH);
 #ifdef L_VERSION_COMMENT
   if(L_VERSION_COMMENT[0]){
     lua_pushliteral(L, L_VERSION_COMMENT);

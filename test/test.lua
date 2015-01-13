@@ -32,6 +32,12 @@ local MAC    = "eb048021e72f5e2a7db3"
 local etalon = "91aa63f0cb2b92479f89c32eb6b875b8c7d487aa7a8cb3705a5d8d276d6a2e8fc7cad94cc28ed0ad123e"
 local AES256 = AesFileEncrypt.AES256
 
+print("------------------------------------")
+print("Lua    version: " .. (_G.jit and _G.jit.version or _G._VERSION))
+print("AesFileEncrypt: " .. AesFileEncrypt._VERSION)
+print("------------------------------------")
+print("")
+
 local _ENV = TEST_CASE"AesFileEncrypt"
 
 local fenc
@@ -74,7 +80,7 @@ function test_version()
   assert_number(minor)
   assert_number(patch)
 
-  local ver = table.concat({major, minor, patch}, '.')
+  local ver = ("%d.%d.%d"):format(major, minor, patch)
   if n ~= 3 then
     assert_equal(4, n)
     assert_string(comment)
